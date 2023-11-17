@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Genre {
+  id         BigInt   @id @default(autoincrement())
+  name       String   @db.VarChar(50)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  tasks      Task[]
+
+  @@map("genres")
+}
+
+model Task {
+  id         BigInt   @id @default(autoincrement())
+  genreId    BigInt   @map("genre_id")
+  name       String   @db.VarChar(100)
+  status     Int      @default(0)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  genre      Genre    @relation(fields: [genreId], references: [id])
+
+  @@map("tasks")
+}
